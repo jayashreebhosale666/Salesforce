@@ -1,0 +1,63 @@
+========Controller===========================
+public class WrapAccEx
+{
+	public List<wrapAccount> wrapAccList{set;get;}
+	public List<Account> selectList{set;get;}
+
+		public WrapAccEx()
+		{
+			wrapAccList=new  List<wrapAccount>();
+			for( Account arec:[select id,name,billingcity,phone from Account limit 10])
+			{
+				wrapAccList.add(new wrapAccount(arec));
+			}
+		}
+		public class wrapAccount
+		{
+			public Account accn{set;get;}
+			public boolean isSelected{set;get;} 
+            
+			public wrapAccount(Account arec)
+			{
+				accn=arec;
+				isSelected=false;
+			}
+		}
+		public void processSelected()
+		{
+			selectList=new List<Account>();
+			
+			for(wrapAccount wap:wrapAccList)
+			{
+				if(wap.isSelected==true)
+				{
+					selectList.add(wap.accn);
+				}
+			}
+		}
+}
+==========================VF Page=========================
+<apex:page controller="WrapAccEx" sidebar="false">
+<apex:form >
+    <apex:pageBlock > 
+        <apex:pageBlockButtons >
+            <apex:commandButton value="display selected list" action="{!processSelected}" reRender="block2"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection columns="2">
+            <apex:pageBlockTable value="{!wrapAccList}" var="item"><apex:column >
+                <apex:inputCheckbox value="{!item.isSelected}" id="inputchid"/></apex:column>
+                <apex:column value="{!item.accn.name}"/>
+                <apex:column value="{!item.accn.phone}"/>
+                <apex:column value="{!item.accn.billingcity}"/>
+            </apex:pageBlockTable>
+            <apex:pageBlockTable value="{!selectList}" var="sl" id="block2">
+                <apex:column value="{!sl.name}"/>
+                <apex:column value="{!sl.phone}"/>
+                <apex:column value="{!sl.billingcity}"/>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>        
+    </apex:pageBlock>
+</apex:form>
+    
+
+</apex:page>
